@@ -1,122 +1,123 @@
-import { useNavigate } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"; // yeh line change hui hai
-import { useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; 
 
 function Dashboard() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
+  // Logout function
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
-  const [columns, setColumns] = useState({
-    pending: [
-      { id: "6", title: "Your Tasks Soon", time: "", status: "Coming" },
-    ],
-    running: [
-      { id: "1", title: "Today Now", time: "8:10 AM", status: "Running" },
-      { id: "3", title: "Team Mun", time: "1:30 PM", status: "Running" },
-      { id: "5", title: "Team Meet Test", time: "5:00 PM", status: "Running" },
-    ],
-    done: [
-      { id: "2", title: "web class", time: "9:00 AM", status: "Done" },
-      { id: "4", title: "Lesson 1 Task", time: "3:00 PM", status: "Done" },
-    ],
-  });
-
-  const onDragEnd = (result) => {
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    const sourceCol = columns[source.droppableId];
-    const destCol = columns[destination.droppableId];
-    const sourceItems = [...sourceCol];
-    const destItems = [...destCol];
-    const [movedItem] = sourceItems.splice(source.index, 1);
-
-    if (source.droppableId === destination.droppableId) {
-      sourceItems.splice(destination.index, 0, movedItem);
-      setColumns({
-        ...columns,
-        [source.droppableId]: sourceItems,
-      });
-    } else {
-      destItems.splice(destination.index, 0, movedItem);
-      setColumns({
-        ...columns,
-        [source.droppableId]: sourceItems,
-        [destination.droppableId]: destItems,
-      });
-    }
+    navigate('/login'); 
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-5 font-sans">
-      <div className="flex justify-between items-center mb-5">
-        <h1 className="text-2xl font-bold text-gray-800">Today Tasks</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white p-2 rounded-full shadow"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="flex min-h-screen bg-gray-100">
       
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-8 text-purple-600">Dashboard</h1>
 
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {Object.entries(columns).map(([columnId, tasks]) => (
-            <Droppable droppableId={columnId} key={columnId}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="bg-white p-4 rounded-2xl shadow-md min-h-[300px]"
-                >
-                  <h2
-                    className={`text-xl font-bold mb-4 ${
-                      columnId === "pending"
-                        ? "text-yellow-500"
-                        : columnId === "running"
-                        ? "text-blue-500"
-                        : "text-green-500"
-                    }`}
-                  >
-                    {columnId.charAt(0).toUpperCase() + columnId.slice(1)}
-                  </h2>
-                  {tasks.map((task, index) => (
-                    <Draggable draggableId={task.id} index={index} key={task.id}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="bg-gray-100 p-3 mb-3 rounded-xl shadow-sm"
-                        >
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-pink-400 flex items-center justify-center rounded-full mr-3 text-white font-bold">
-                              {task.title.slice(0, 2).toUpperCase()}
-                            </div>
-                            <div>
-                              <h3 className="font-semibold">{task.title}</h3>
-                              {task.time && (
-                                <p className="text-xs text-gray-500">{task.time}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
+        <nav className="flex flex-col gap-4">
+          <button className="text-left p-3 rounded-lg hover:bg-purple-100 font-semibold text-gray-700">
+            Overview
+          </button>
+          <button className="text-left p-3 rounded-lg hover:bg-purple-100 font-semibold text-gray-700">
+            Pending Projects
+          </button>
+          <button className="text-left p-3 rounded-lg hover:bg-purple-100 font-semibold text-gray-700">
+            Attendance
+          </button>
+          <button className="text-left p-3 rounded-lg hover:bg-purple-100 font-semibold text-gray-700">
+            To-Do List
+          </button>
+          <button className="text-left p-3 rounded-lg hover:bg-purple-100 font-semibold text-gray-700">
+            Revenue
+          </button>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">Welcome Back!</h2>
+          <div className="flex items-center gap-4">
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="Profile"
+              className="w-10 h-10 rounded-full"
+            />
+            <button 
+              onClick={handleLogout} 
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-xl font-semibold"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </DragDropContext>
+
+        {/* Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+          {/* Attendance Card */}
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            className="bg-white p-6 rounded-2xl shadow-lg flex flex-col"
+          >
+            <h3 className="text-xl font-bold text-gray-700 mb-4">Attendance</h3>
+            <p className="text-gray-500 mb-2">Days Present: <span className="font-semibold text-green-500">22</span></p>
+            <p className="text-gray-500">Days Absent: <span className="font-semibold text-red-500">2</span></p>
+          </motion.div>
+
+          {/* Revenue Card */}
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            className="bg-white p-6 rounded-2xl shadow-lg flex flex-col"
+          >
+            <h3 className="text-xl font-bold text-gray-700 mb-4">Revenue</h3>
+            <p className="text-gray-500 mb-2">This Month: <span className="font-semibold text-green-600">$5,400</span></p>
+            <p className="text-gray-500">Target: <span className="font-semibold">$10,000</span></p>
+          </motion.div>
+
+          {/* To-Do List */}
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            className="bg-white p-6 rounded-2xl shadow-lg flex flex-col"
+          >
+            <h3 className="text-xl font-bold text-gray-700 mb-4">To-Do List</h3>
+            <ul className="list-disc pl-5 text-gray-600">
+              <li>Finish project proposal</li>
+              <li>Update website design</li>
+              <li>Prepare client meeting</li>
+            </ul>
+          </motion.div>
+
+        </div>
+
+        {/* Pending Projects Section */}
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
+          <h3 className="text-2xl font-bold text-gray-700 mb-4">Pending Projects</h3>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl hover:bg-gray-100">
+              <span className="font-semibold text-gray-700">E-commerce Website</span>
+              <span className="text-sm text-purple-500 font-bold">In Progress</span>
+            </div>
+
+            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl hover:bg-gray-100">
+              <span className="font-semibold text-gray-700">Mobile App Redesign</span>
+              <span className="text-sm text-purple-500 font-bold">Pending</span>
+            </div>
+
+            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl hover:bg-gray-100">
+              <span className="font-semibold text-gray-700">SEO Optimization</span>
+              <span className="text-sm text-purple-500 font-bold">Completed</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
